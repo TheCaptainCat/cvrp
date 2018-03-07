@@ -5,7 +5,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 from cvrp import Builder
-from cvrp.graphics import Graph
+from cvrp.graphics import Graphics
+from cvrp.logic import Route
 
 
 def main():
@@ -14,8 +15,10 @@ def main():
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     gluPerspective(45, (display[0] / display[1]), 0.1, 150.0)
     glTranslatef(-50.0, -50.0, -150)
-    vertices = Builder('../data/data03.csv').build()
-    graph = Graph(vertices)
+    vertices = Builder('../data/data01.csv').build()
+    route = Route(vertices)
+    route.random_path()
+    graph = Graphics(route)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

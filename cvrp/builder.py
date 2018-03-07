@@ -1,4 +1,4 @@
-from cvrp import Vertex
+from cvrp.logic import Vertex
 
 
 class Builder:
