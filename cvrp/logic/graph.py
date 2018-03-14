@@ -34,3 +34,9 @@ class Graph:
         self.routes.append(route)
         for route in self.routes:
             route.random_path()
+
+    def random_swap(self):
+        tmp_list = list(self.vertices.values())
+        v1 = self.vertices[random.randint(1, len(tmp_list) - 1)]
+        v2 = self.vertices[random.randint(1, len(tmp_list) - 1)]
+        v1.swap_with(v2)

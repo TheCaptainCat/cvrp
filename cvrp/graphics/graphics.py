@@ -1,5 +1,4 @@
-from cvrp.graphics import Point, Line
-from cvrp.graphics.colors import generate_new_color
+from cvrp.graphics import Point, Path
 
 from OpenGL.GL import *
 
@@ -8,16 +7,14 @@ class Graphics:
     def __init__(self, graph):
         self.graph = graph
         self.points = []
-        self.lines = []
-        self.colors = {}
+        self.paths = []
+        colors = []
         for i in graph.vertices:
             self.points.append(Point(graph.vertices[i]))
         for route in graph.routes:
-            edges = []
-            for edge in route.edges:
-                edges.append(Line(edge))
-            self.lines.append(edges)
-            self.colors[self.lines.index(edges)] = generate_new_color(self.colors.values(), pastel_factor=0.01)
+            path = Path(route, colors)
+            self.paths.append(path)
+            colors.append(path.color)
 
     def draw(self):
         glPointSize(10)
@@ -27,9 +24,9 @@ class Graphics:
         glEnd()
         glPointSize(1)
         glBegin(GL_LINES)
-        for lines in self.lines:
-            glColor3fv(self.colors[self.lines.index(lines)])
-            for line in lines:
+        for path in self.paths:
+            glColor3fv(path.color)
+            for line in path.lines:
                 line.draw()
             glColor3f(1.0, 1.0, 1.0)
         glEnd()
