@@ -13,6 +13,10 @@ class Graph:
     def edges(self):
         return [edge for route in self.routes for edge in route.edges]
 
+    @property
+    def distance(self):
+        return sum(route.distance for route in self.routes)
+
     def random_routes(self):
         cnt = 0
         vertices = set()
@@ -35,8 +39,13 @@ class Graph:
         for route in self.routes:
             route.random_path()
 
+    def swap_vertices(self, v1, v2):
+        v1.swap_with(v2)
+        self.vertices[v1.id] = v1
+        self.vertices[v2.id] = v2
+
     def random_swap(self):
         tmp_list = list(self.vertices.values())
         v1 = self.vertices[random.randint(1, len(tmp_list) - 1)]
         v2 = self.vertices[random.randint(1, len(tmp_list) - 1)]
-        v1.swap_with(v2)
+        self.swap_vertices(v1, v2)
