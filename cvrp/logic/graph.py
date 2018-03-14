@@ -6,8 +6,10 @@ from cvrp.logic import Route
 class Graph:
     def __init__(self, vertices, capacity):
         self.vertices = vertices
+        self.vertex_count = len(list(self.vertices.values()))
         self.capacity = capacity
         self.routes = []
+        self.algorithm = None
 
     @property
     def edges(self):
@@ -16,6 +18,18 @@ class Graph:
     @property
     def distance(self):
         return sum(route.distance for route in self.routes)
+
+    @property
+    def is_full(self):
+        for route in self.routes:
+            if route.quantity > self.capacity:
+                return True
+        return False
+
+    def compute_algorithm(self):
+        if self.algorithm is not None:
+            self.algorithm.compute()
+            # self.delete_routes()
 
     def random_routes(self):
         cnt = 0
@@ -39,13 +53,45 @@ class Graph:
         for route in self.routes:
             route.random_path()
 
+    def pick_random_vertices(self):
+        v1 = self.vertices[random.randint(1, self.vertex_count - 1)]
+        v2 = self.vertices[random.randint(1, self.vertex_count - 1)]
+        return v1, v2
+
     def swap_vertices(self, v1, v2):
         v1.swap_with(v2)
         self.vertices[v1.id] = v1
         self.vertices[v2.id] = v2
 
     def random_swap(self):
-        tmp_list = list(self.vertices.values())
-        v1 = self.vertices[random.randint(1, len(tmp_list) - 1)]
-        v2 = self.vertices[random.randint(1, len(tmp_list) - 1)]
+        v1, v2 = self.pick_random_vertices()
         self.swap_vertices(v1, v2)
+
+    def find_route_by_vertex(self, vertex):
+        for route in self.routes:
+            for v in route.vertices:
+                if v is vertex:
+                    return route
+        return None
+
+    def transfer_vertex(self, vertex, origin_route, dest_route):
+        origin_route.remove_vertex(vertex)
+        dest_route.add_vertex(vertex)
+
+    def delete_routes(self):
+        min_route = min(self.routes, key=lambda r: len(r.vertices))
+        if len(min_route.vertices) <= 1:
+            return
+        loop = True
+        while loop:
+            vertex = min(min_route.vertices, key=lambda v: v.qt if v.id != 0 else float('infinity'))
+            change = False
+            for route in self.routes:
+                if route is not min_route:
+                    if route.quantity + vertex.qt <= self.capacity:
+                        self.transfer_vertex(vertex, min_route, route)
+                        change = True
+                        break
+            if not change:
+                loop = False
+

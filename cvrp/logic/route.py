@@ -9,6 +9,8 @@ class Route:
         self.edges = []
 
     def random_path(self):
+        if len(self.vertices) == 0:
+            return
         vertex = self.vertices[0]
         vertices = set()
         for v in self.vertices:
@@ -31,3 +33,11 @@ class Route:
 
     def __repr__(self):
         return f'Route ({len(self.vertices)} vertices) (distance: {self.distance}) (quantity: {self.quantity})'
+
+    def remove_vertex(self, vertex):
+        self.vertices.remove(vertex)
+        self.random_path()
+
+    def add_vertex(self, vertex):
+        self.vertices.append(vertex)
+        self.random_path()
