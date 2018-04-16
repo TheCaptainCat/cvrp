@@ -7,5 +7,9 @@ class Path:
         self.color = generate_new_color(existing_colors, pastel_factor=0.01)
         self.route = route
         self.lines = []
-        for edge in route.edges:
+        self.create_lines()
+
+    def create_lines(self):
+        self.lines = []
+        for edge in self.route.edges:
             self.lines.append(Line(edge))

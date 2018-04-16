@@ -24,11 +24,11 @@ def main():
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     gluPerspective(45, (display[0] / display[1]), 0.1, 150.0)
     glTranslatef(-50.0, -50.0, -150)
-    vertices = Builder('../data/data01.csv').build()
+    vertices = Builder('../data/data03.csv').build()
     graph = Graph(vertices, 100)
     graph.random_routes()
     graphics = Graphics(graph)
-    graph.algorithm = Tabu(graph, 5, 200)
+    graph.algorithm = Tabu(graph, 15, 300)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -38,6 +38,10 @@ def main():
         graphics.draw()
 
         graph.compute_algorithm()
+        graph.delete_routes()
+        if graph.has_changed:
+            graph.has_changed = False
+            graphics.rebuild_paths()
 
         i = 0
         for path in graphics.paths:

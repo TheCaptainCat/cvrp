@@ -8,13 +8,24 @@ class Graphics:
         self.graph = graph
         self.points = []
         self.paths = []
-        colors = []
         for i in graph.vertices:
             self.points.append(Point(graph.vertices[i]))
-        for route in graph.routes:
+        colors = []
+        for route in self.graph.routes:
             path = Path(route, colors)
             self.paths.append(path)
             colors.append(path.color)
+
+    def rebuild_paths(self):
+        to_remove = []
+        for path in self.paths:
+            if len(path.route.vertices) == 1:
+                to_remove.append(path)
+            else:
+                path.create_lines()
+        for path in to_remove:
+            print(f'Removed {path.route}')
+            self.paths.remove(path)
 
     def draw(self):
         glPointSize(10)

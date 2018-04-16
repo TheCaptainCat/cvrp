@@ -10,6 +10,7 @@ class Graph:
         self.capacity = capacity
         self.routes = []
         self.algorithm = None
+        self.has_changed = False
 
     @property
     def edges(self):
@@ -67,6 +68,9 @@ class Graph:
         v1, v2 = self.pick_random_vertices()
         self.swap_vertices(v1, v2)
 
+    def delete_route(self, route):
+        self.routes.remove(route)
+
     def find_route_by_vertex(self, vertex):
         for route in self.routes:
             for v in route.vertices:
@@ -75,13 +79,22 @@ class Graph:
         return None
 
     def transfer_vertex(self, vertex, origin_route, dest_route):
+        e11, e12 = origin_route.find_edges_by_vertex(vertex)
+        e21, e22 = dest_route.find_edges_by_vertex(dest_route.vertices[0])
+        e11.v2 = e12.v2
+        e12.v2 = e22.v2
+        e22.v2 = vertex
         origin_route.remove_vertex(vertex)
+        origin_route.remove_edge(e12)
+        if len(origin_route.vertices) == 1:
+            self.delete_route(origin_route)
         dest_route.add_vertex(vertex)
+        dest_route.add_edge(e12)
+        print(f'Transfer from {origin_route} to {dest_route}')
+        self.has_changed = True
 
     def delete_routes(self):
         min_route = min(self.routes, key=lambda r: len(r.vertices))
-        if len(min_route.vertices) <= 1:
-            return
         loop = True
         while loop:
             vertex = min(min_route.vertices, key=lambda v: v.qt if v.id != 0 else float('infinity'))
@@ -90,8 +103,8 @@ class Graph:
                 if route is not min_route:
                     if route.quantity + vertex.qt <= self.capacity:
                         self.transfer_vertex(vertex, min_route, route)
-                        change = True
+                        if len(min_route.vertices) > 1:
+                            change = True
                         break
             if not change:
                 loop = False
-

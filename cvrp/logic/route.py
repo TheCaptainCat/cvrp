@@ -31,13 +31,22 @@ class Route:
     def distance(self):
         return sum(e.distance for e in self.edges)
 
+    def find_edges_by_vertex(self, vertex):
+        e1 = [e for e in self.edges if e.v2 == vertex]
+        e2 = [e for e in self.edges if e.v1 == vertex]
+        return e1[0], e2[0]
+
     def __repr__(self):
         return f'Route ({len(self.vertices)} vertices) (distance: {self.distance}) (quantity: {self.quantity})'
 
     def remove_vertex(self, vertex):
         self.vertices.remove(vertex)
-        self.random_path()
+
+    def remove_edge(self, edge):
+        self.edges.remove(edge)
 
     def add_vertex(self, vertex):
         self.vertices.append(vertex)
-        self.random_path()
+
+    def add_edge(self, edge):
+        self.edges.append(edge)
