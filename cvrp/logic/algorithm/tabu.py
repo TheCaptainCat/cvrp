@@ -10,18 +10,19 @@ class Tabu:
         start_dist = self.graph.distance
 
         def pick_vertices():
-            v1 = v2 = None
-            while v1 is None or v2 is None or (v1.id, v2.id) in self.tabu or (v1.id, v2.id) in permutations.keys():
-                v1, v2 = self.graph.pick_random_vertices()
-            return v1, v2
+            _v1 = _v2 = None
+            while _v1 is None or _v2 is None or (_v1.id, _v2.id) in self.tabu \
+                    or (_v1.id, _v2.id) in permutations.keys():
+                _v1, _v2 = self.graph.pick_random_vertices()
+            return _v1, _v2
 
         while len(permutations) < self.neighbors_limit * 2:
-            v1_id, v2_id = pick_vertices()
-            self.graph.swap_vertices(v1_id, v2_id)
+            v1, v2 = pick_vertices()
+            self.graph.swap_vertices(v1, v2)
             if not self.graph.is_full:
-                permutations[(v1_id.id, v2_id.id)] = self.graph.distance
-                permutations[(v2_id.id, v1_id.id)] = self.graph.distance
-            self.graph.swap_vertices(v1_id, v2_id)
+                permutations[(v1.id, v2.id)] = self.graph.distance
+                permutations[(v2.id, v1.id)] = self.graph.distance
+            self.graph.swap_vertices(v1, v2)
 
         v1_id, v2_id = min(permutations.keys(), key=lambda x: permutations[x])
         min_dist = min(permutations.values())

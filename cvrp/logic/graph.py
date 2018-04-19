@@ -4,13 +4,14 @@ from cvrp.logic import Route
 
 
 class Graph:
-    def __init__(self, vertices, capacity):
+    def __init__(self, vertices, capacity, routes_cnt):
         self.vertices = vertices
         self.vertex_count = len(list(self.vertices.values()))
         self.capacity = capacity
         self.routes = []
         self.algorithm = None
         self.has_changed = False
+        self.routes_cnt = routes_cnt
 
     @property
     def edges(self):
@@ -33,16 +34,19 @@ class Graph:
             # self.delete_routes()
 
     def random_routes(self):
-        cnt = 0
+        total = 0
         vertices = set()
         for v in self.vertices.values():
             if v.id != 0:
                 vertices.add(v)
+                total += v.qt
+        per_route = total / self.routes_cnt
         route = Route()
         route.vertices.append(self.vertices[0])
+        cnt = 0
         while len(vertices) > 0:
             r_vertex = random.choice(list(vertices))
-            if cnt + r_vertex.qt > self.capacity:
+            if cnt > per_route or cnt + r_vertex.qt > self.capacity:
                 self.routes.append(route)
                 cnt = 0
                 route = Route()
