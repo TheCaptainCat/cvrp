@@ -28,7 +28,7 @@ def main():
     graph = Graph(vertices, 100, 4)
     graph.random_routes()
     graphics = Graphics(graph)
-    graph.algorithm = Tabu(graph, 6, 150)
+    graph.algorithm = Tabu(graph, 6, 100)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

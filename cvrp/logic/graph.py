@@ -31,7 +31,6 @@ class Graph:
     def compute_algorithm(self):
         if self.algorithm is not None:
             self.algorithm.compute()
-            # self.delete_routes()
 
     def random_routes(self):
         total = 0
@@ -41,7 +40,7 @@ class Graph:
                 vertices.add(v)
                 total += v.qt
         per_route = total / self.routes_cnt
-        route = Route()
+        route = Route(self.vertices[0])
         route.vertices.append(self.vertices[0])
         cnt = 0
         while len(vertices) > 0:
@@ -49,7 +48,7 @@ class Graph:
             if cnt > per_route or cnt + r_vertex.qt > self.capacity:
                 self.routes.append(route)
                 cnt = 0
-                route = Route()
+                route = Route(self.vertices[0])
                 route.vertices.append(self.vertices[0])
             vertices.remove(r_vertex)
             route.vertices.append(r_vertex)
@@ -81,34 +80,3 @@ class Graph:
                 if v is vertex:
                     return route
         return None
-
-    def transfer_vertex(self, vertex, origin_route, dest_route):
-        e11, e12 = origin_route.find_edges_by_vertex(vertex)
-        e21, e22 = dest_route.find_edges_by_vertex(dest_route.vertices[0])
-        e11.v2 = e12.v2
-        e12.v2 = e22.v2
-        e22.v2 = vertex
-        origin_route.remove_vertex(vertex)
-        origin_route.remove_edge(e12)
-        if len(origin_route.vertices) == 1:
-            self.delete_route(origin_route)
-        dest_route.add_vertex(vertex)
-        dest_route.add_edge(e12)
-        print(f'Transfer from {origin_route} to {dest_route}')
-        self.has_changed = True
-
-    def delete_routes(self):
-        min_route = min(self.routes, key=lambda r: len(r.vertices))
-        loop = True
-        while loop:
-            vertex = min(min_route.vertices, key=lambda v: v.qt if v.id != 0 else float('infinity'))
-            change = False
-            for route in self.routes:
-                if route is not min_route:
-                    if route.quantity + vertex.qt <= self.capacity:
-                        self.transfer_vertex(vertex, min_route, route)
-                        if len(min_route.vertices) > 1:
-                            change = True
-                        break
-            if not change:
-                loop = False

@@ -11,5 +11,8 @@ class Path:
 
     def create_lines(self):
         self.lines = []
-        for edge in self.route.edges:
-            self.lines.append(Line(edge))
+        vertex = self.route.first_vertex
+        self.lines.append(Line(vertex.edge_in))
+        while vertex.id != 0:
+            self.lines.append(Line(vertex.edge_out))
+            vertex = vertex.edge_out.v2
