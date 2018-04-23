@@ -38,18 +38,16 @@ def main():
         graphics.draw()
 
         i = 0
-        for path in graphics.paths:
-            draw_text((-30, (100 - i * 3), 0), (path.color[0] * 255, path.color[1] * 255, path.color[2] * 255, 255),
-                      ("Route %d: %.2f (%d %d)" % (i, path.route.distance, len(path.route.vertices), path.route.quantity)))
+        for route in graph.routes:
+            color = graphics.colors[route]
+            draw_text((-30, (100 - i * 3), 0), (color[0] * 255, color[1] * 255, color[2] * 255, 255),
+                      ("Route %d: %.2f (%d %d)" % (i, route.distance, len(route.vertices), route.quantity)))
             i += 1
         draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Total distance: %d" % graph.distance))
 
         pygame.display.flip()
 
         graph.compute_algorithm()
-        if graph.has_changed:
-            graph.has_changed = False
-            graphics.rebuild_paths()
 
 
 main()

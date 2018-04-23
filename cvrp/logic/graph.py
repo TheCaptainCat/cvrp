@@ -10,7 +10,6 @@ class Graph:
         self.capacity = capacity
         self.routes = []
         self.algorithm = None
-        self.has_changed = False
         self.routes_cnt = routes_cnt
 
     @property

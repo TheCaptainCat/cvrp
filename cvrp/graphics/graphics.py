@@ -1,4 +1,4 @@
-from cvrp.graphics import Point, Path
+from cvrp.graphics.colors import generate_new_color
 
 from OpenGL.GL import *
 
@@ -6,38 +6,36 @@ from OpenGL.GL import *
 class Graphics:
     def __init__(self, graph):
         self.graph = graph
-        self.points = []
-        self.paths = []
-        for i in graph.vertices:
-            self.points.append(Point(graph.vertices[i]))
-        colors = []
+        self.colors = {}
         for route in self.graph.routes:
-            path = Path(route, colors)
-            self.paths.append(path)
-            colors.append(path.color)
-
-    def rebuild_paths(self):
-        to_remove = []
-        for path in self.paths:
-            if len(path.route.vertices) == 1:
-                to_remove.append(path)
-            else:
-                path.create_lines()
-        for path in to_remove:
-            print(f'Removed {path.route}')
-            self.paths.remove(path)
+            self.colors[route] = generate_new_color(self.colors.values(), pastel_factor=0.01)
 
     def draw(self):
+        def draw_line(v1, v2):
+            glVertex2f(v1.x, v1.y)
+            glVertex2f(v2.x, v2.y)
+
         glPointSize(10)
         glBegin(GL_POINTS)
-        for point in self.points:
-            point.draw()
+        for v in self.graph.vertices:
+            vertex = self.graph.vertices[v]
+            if vertex.id == 0:
+                glColor3f(1.0, 0.0, 0.0)
+            glVertex2f(vertex.x, vertex.y)
+            if vertex.id == 0:
+                glColor3f(1.0, 1.0, 1.0)
         glEnd()
+
         glPointSize(1)
         glBegin(GL_LINES)
-        for path in self.paths:
-            glColor3fv(path.color)
-            for line in path.lines:
-                line.draw()
+        for route in self.graph.routes:
+            glColor3fv(self.colors[route])
+            vertex = route.first_vertex
+            draw_line(vertex.edge_in.v1, vertex.edge_in.v2)
+            edge = route.first_vertex.edge_in
+            while edge.v2.id != 0:
+                draw_line(edge.v1, edge.v2)
+                edge = edge.v2.edge_out
+            draw_line(edge.v1, edge.v2)
             glColor3f(1.0, 1.0, 1.0)
         glEnd()
