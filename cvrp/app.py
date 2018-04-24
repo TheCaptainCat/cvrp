@@ -7,7 +7,7 @@ from pygame.locals import *
 from cvrp import Builder
 from cvrp.graphics import Graphics
 from cvrp.logic import Graph
-from cvrp.logic.algorithm import Tabu
+from cvrp.logic.algorithm import Tabu, Genetic
 
 
 def draw_text(position, v_color, text_string):
@@ -28,7 +28,8 @@ def main():
     graph = Graph(vertices, 100)
     graph.random_routes()
     graphics = Graphics(graph)
-    graph.algorithm = Tabu(graph, 20, 100)
+    graph.algorithm = Tabu(graph, 20, 200)
+    # graph.algorithm = Genetic(graph, 10)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
