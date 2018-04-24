@@ -25,10 +25,10 @@ def main():
     gluPerspective(45, (display[0] / display[1]), 0.1, 150.0)
     glTranslatef(-50.0, -50.0, -150)
     vertices = Builder('../data/data01.csv').build()
-    graph = Graph(vertices, 100, 4)
+    graph = Graph(vertices, 100)
     graph.random_routes()
     graphics = Graphics(graph)
-    graph.algorithm = Tabu(graph, 6, 100)
+    graph.algorithm = Tabu(graph, 20, 100)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -45,9 +45,9 @@ def main():
             i += 1
         draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Total distance: %d" % graph.distance))
 
-        pygame.display.flip()
-
         graph.compute_algorithm()
+
+        pygame.display.flip()
 
 
 main()
