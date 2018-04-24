@@ -16,13 +16,16 @@ class Tabu:
                 _v1, _v2 = self.graph.pick_random_vertices()
             return _v1, _v2
 
-        while len(permutations) < self.neighbors_limit * 2:
+        watcher = 0
+        while len(permutations) < self.neighbors_limit * 2 and watcher < 250:
             v1, v2 = pick_vertices()
             self.graph.swap_vertices(v1, v2)
             if not self.graph.is_full:
                 permutations[(v1.id, v2.id)] = self.graph.distance
                 permutations[(v2.id, v1.id)] = self.graph.distance
+                watcher = 0
             self.graph.swap_vertices(v1, v2)
+            watcher += 1
 
         v1_id, v2_id = min(permutations.keys(), key=lambda x: permutations[x])
         min_dist = min(permutations.values())
