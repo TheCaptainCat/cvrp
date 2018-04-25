@@ -11,24 +11,21 @@ class Tabu:
 
         def pick_vertices():
             _v1 = _v2 = None
-            while _v1 is None or _v2 is None or (_v1.id, _v2.id) in self.tabu \
-                    or (_v1.id, _v2.id) in permutations.keys():
+            while _v1 is None or _v2 is None or (_v1.id, _v2.id) in self.tabu:
                 _v1, _v2 = self.graph.pick_random_vertices()
             return _v1, _v2
 
-        watcher = 0
-        while len(permutations) < self.neighbors_limit * 2 and watcher < 250:
+        while len(permutations) < self.neighbors_limit * 2:
             v1, v2 = pick_vertices()
             self.graph.swap_vertices(v1, v2)
-            if not self.graph.is_full:
-                permutations[(v1.id, v2.id)] = self.graph.distance
-                permutations[(v2.id, v1.id)] = self.graph.distance
-                watcher = 0
+            is_full = self.graph.is_full
+            permutations[(v1.id, v2.id)] = (self.graph.distance, is_full)
+            permutations[(v2.id, v1.id)] = (self.graph.distance, is_full)
             self.graph.swap_vertices(v1, v2)
-            watcher += 1
 
-        v1_id, v2_id = min(permutations.keys(), key=lambda x: permutations[x])
-        min_dist = min(permutations.values())
+        v1_id, v2_id = min(permutations.keys(),
+                           key=lambda x: permutations[x][0] if not permutations[x][1] else float('infinity'))
+        min_dist = permutations[(v1_id, v2_id)][0]
         if min_dist > start_dist:
             self.tabu.append((v1_id, v2_id))
             self.tabu.append((v2_id, v1_id))

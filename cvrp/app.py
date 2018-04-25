@@ -28,7 +28,7 @@ def main():
     graph = Graph(vertices, 100)
     graph.random_routes()
     graphics = Graphics(graph)
-    graph.algorithm = Tabu(graph, 20, 200)
+    graph.algorithm = Tabu(graph, 20, 300)
     # graph.algorithm = Genetic(graph, 10)
     while True:
         for event in pygame.event.get():
