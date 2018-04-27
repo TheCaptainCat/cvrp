@@ -9,6 +9,7 @@ class Vertex:
         self.qt = qt
         self.edge_in = None
         self.edge_out = None
+        self.route = None
 
     def __repr__(self):
         return f'Vertex {self.id} [{self.x},{self.y}] -> {self.qt}'

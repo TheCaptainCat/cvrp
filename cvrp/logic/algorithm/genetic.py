@@ -1,3 +1,6 @@
+import copy
+import random
+
 from cvrp.logic import Vertex, Graph
 
 
@@ -18,6 +21,45 @@ class Genetic:
 
         while len(self.solutions) < self.solution_cnt:
             self.solutions.append(Graph(copy_vertices(), self.graph.capacity))
+            self.solutions[len(self.solutions) - 1].random_routes()
+
+    def reproduction(self):
+        total_distance = sum(graph.distance for graph in self.solutions)
+        ranks = [graph for graph in self.solutions]
+        roulette = {}
+        for graph in self.solutions:
+            roulette[graph] = graph.distance / total_distance
+        ranks = sorted(ranks, key=lambda g: roulette[g])
+        new_solutions = []
+        while len(new_solutions) < self.solution_cnt:
+            r = random.random()
+            w = 1
+            rank = 0
+            while 1 - w < r:
+                rank += 1
+                w /= 1.5
+            new_solutions.append(copy.deepcopy(ranks[min(rank - 1, len(ranks) - 1)]))
+        self.solutions = new_solutions
+
+    def crossover(self):
+        for i in range(0, self.solution_cnt):
+            giver = self.solutions[i]
+            receiver = giver
+            while receiver is giver:
+                receiver = self.solutions[random.randint(0, len(self.solutions) - 1)]
+            v_id = random.randint(1, len(giver.vertices) - 1)
+            length = random.randint(0, 4)
+            length2 = 0
+            vertex = giver.vertices[v_id]
+            vertex2 = vertex.edge_out.v2
+            while vertex2.id != 0 and length2 < length:
+                vertex2 = vertex2.edge_out.v2
+                length2 += 1
+
+    def mutation(self):
+        pass
 
     def compute(self):
-        pass
+        self.reproduction()
+        self.crossover()
+        self.mutation()

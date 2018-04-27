@@ -12,10 +12,6 @@ class Graph:
         self.algorithm = None
 
     @property
-    def edges(self):
-        return [edge for route in self.routes for edge in route.edges]
-
-    @property
     def distance(self):
         return sum(route.distance for route in self.routes)
 
@@ -70,6 +66,9 @@ class Graph:
 
     def delete_route(self, route):
         self.routes.remove(route)
+
+    def unlink(self, vertex):
+        pass
 
     def find_route_by_vertex(self, vertex):
         for route in self.routes:
