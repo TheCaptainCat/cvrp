@@ -49,6 +49,10 @@ class Route:
             v = v.edge_out.v2
         return s
 
+    @property
+    def first_edge(self):
+        return self.first_vertex.edge_in
+
     def __repr__(self):
         return f'Route ({len(self.vertices)} vertices) (distance: {self.distance}) (quantity: {self.quantity})'
 
