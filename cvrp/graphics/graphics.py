@@ -7,8 +7,8 @@ class Graphics:
     def __init__(self, graph):
         self.graph = graph
         self.colors = {}
-        for route in self.graph.routes:
-            self.colors[route] = generate_new_color(self.colors.values(), pastel_factor=0.01)
+        for i in range(0, len(self.graph.routes)):
+            self.colors[i] = generate_new_color(self.colors.values(), pastel_factor=0.01)
 
     def draw(self):
         def draw_line(v1, v2):
@@ -17,25 +17,23 @@ class Graphics:
 
         glPointSize(10)
         glBegin(GL_POINTS)
+
+        glColor3f(1.0, 0.0, 0.0)
+        glVertex2f(self.graph.home.x, self.graph.home.y)
+        glColor3f(1.0, 1.0, 1.0)
         for v in self.graph.vertices:
             vertex = self.graph.vertices[v]
-            if vertex.id == 0:
-                glColor3f(1.0, 0.0, 0.0)
             glVertex2f(vertex.x, vertex.y)
-            if vertex.id == 0:
-                glColor3f(1.0, 1.0, 1.0)
         glEnd()
 
         glPointSize(1)
         glBegin(GL_LINES)
-        for route in self.graph.routes:
-            glColor3fv(self.colors[route])
-            vertex = route.first_vertex
-            draw_line(vertex.edge_in.v1, vertex.edge_in.v2)
-            edge = route.first_vertex.edge_in
-            while edge.v2.id != 0:
-                draw_line(edge.v1, edge.v2)
-                edge = edge.v2.edge_out
-            draw_line(edge.v1, edge.v2)
+        for i in range(0, len(self.graph.routes)):
+            route = self.graph.routes[i]
+            glColor3fv(self.colors[i])
+            draw_line(self.graph.home, route[0])
+            for j in range(1, len(route)):
+                draw_line(route[j - 1], route[j])
+            draw_line(route[len(route) - 1], self.graph.home)
             glColor3f(1.0, 1.0, 1.0)
         glEnd()
