@@ -38,29 +38,35 @@ class Graph:
     def find_vertex_coordinates(self, v_id):
         for route_id in range(0, len(self.routes)):
             for v_index in range(0, len(self.routes[route_id])):
-                if self.routes[route_id][v_index].id is v_id:
+                if self.routes[route_id][v_index].id == v_id:
                     return route_id, v_index
         return None
 
-    def random_routes(self):
-        vertices = set()
-        for v in self.vertices.values():
+    @classmethod
+    def random_routes(cls, vertices, capacity):
+        routes = []
+        vertices_set = set()
+        for v in vertices.values():
             if v.id != 0:
-                vertices.add(v)
+                vertices_set.add(v)
         route = []
         cnt = 0
-        while len(vertices) > 0:
-            r_vertex = random.choice(list(vertices))
-            if cnt + r_vertex.qt > self.capacity:
-                self.routes.append(route)
+        while len(vertices_set) > 0:
+            r_vertex = random.choice(list(vertices_set))
+            if cnt + r_vertex.qt > capacity:
+                routes.append(route)
                 cnt = 0
                 route = []
-            vertices.remove(r_vertex)
+            vertices_set.remove(r_vertex)
             route.append(r_vertex)
             cnt += r_vertex.qt
-        self.routes.append(route)
-        for route in self.routes:
+        routes.append(route)
+        for route in routes:
             random.shuffle(route)
+        return routes
+
+    def set_random_routes(self):
+        self.routes = Graph.random_routes(self.vertices, self.capacity)
 
     def pick_random_vertices(self):
         v1 = self.vertices[random.randint(1, self.vertices_cnt - 1)]

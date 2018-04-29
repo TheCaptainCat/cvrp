@@ -26,10 +26,10 @@ def main():
     glTranslatef(-50.0, -50.0, -150)
     vertices = Builder('../data/data01.csv').build()
     graph = Graph(vertices, 100)
-    graph.random_routes()
+    graph.set_random_routes()
     graphics = Graphics(graph)
-    graph.algorithm = Tabu(graph, 20, 300)
-    # graph.algorithm = Genetic(graph, 10)
+    # graph.algorithm = Tabu(graph, 20, 300)
+    graph.algorithm = Genetic(graph, 10)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
