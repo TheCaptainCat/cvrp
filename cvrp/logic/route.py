@@ -18,7 +18,6 @@ class Route:
                 vertices.add(v)
         while len(vertices) > 0:
             r_vertex = random.choice(list(vertices))
-            r_vertex.route = self
             if vertex.id == 0:
                 self.first_vertex = r_vertex
             vertices.remove(r_vertex)
@@ -57,7 +56,10 @@ class Route:
         return f'Route ({len(self.vertices)} vertices) (distance: {self.distance}) (quantity: {self.quantity})'
 
     def remove_vertex(self, vertex):
+        vertex.route = None
         self.vertices.remove(vertex)
 
     def add_vertex(self, vertex):
+        if vertex.id != 0:
+            vertex.route = self
         self.vertices.append(vertex)

@@ -43,18 +43,21 @@ class Genetic:
 
     def crossover(self):
         for i in range(0, self.solution_cnt):
+            print(i)
             giver = self.solutions[i]
             receiver = giver
             while receiver is giver:
                 receiver = self.solutions[random.randint(0, len(self.solutions) - 1)]
             v_id = random.randint(1, len(giver.vertices) - 1)
-            length = random.randint(0, 4)
-            length2 = 0
+            r_length = random.randint(1, 5)
+            length = 1
             vertex = giver.vertices[v_id]
-            vertex2 = vertex.edge_out.v2
-            while vertex2.id != 0 and length2 < length:
+            vertex2 = vertex
+            while vertex2.edge_out.v2.id != 0 and length < r_length:
                 vertex2 = vertex2.edge_out.v2
-                length2 += 1
+                length += 1
+            new_head = receiver.vertices[random.randint(1, len(receiver.vertices) - 1)]
+            receiver.link_route_fragment(new_head, vertex, length)
 
     def mutation(self):
         pass

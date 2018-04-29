@@ -44,7 +44,7 @@ class Graph:
                 route = Route(self.vertices[0])
                 route.vertices.append(self.vertices[0])
             vertices.remove(r_vertex)
-            route.vertices.append(r_vertex)
+            route.add_vertex(r_vertex)
             cnt += r_vertex.qt
         self.routes.append(route)
         for route in self.routes:
@@ -67,7 +67,57 @@ class Graph:
     def delete_route(self, route):
         self.routes.remove(route)
 
-    def unlink(self, vertex):
+    def unlink_route_fragment(self, fragment_head, length=1):
+        route = self.find_route_by_vertex(fragment_head)
+
+        def unlink_vertex(vertex):
+            route.remove_vertex(vertex)
+            del self.vertices[vertex.id]
+
+        unlink_vertex(fragment_head)
+        previous_edge = fragment_head.edge_in
+
+        last_vertex = fragment_head
+        next_vertex = fragment_head.edge_out.v2
+        i = 1
+        while i < length:
+            unlink_vertex(next_vertex)
+            last_vertex = next_vertex
+            next_vertex = next_vertex.edge_out.v2
+            i += 1
+
+        previous_edge.v2 = next_vertex
+        if next_vertex.id != 0:
+            next_vertex.edge_in = previous_edge
+        # fragment_head.edge_in = None
+        # last_vertex.edge_out.v2 = None
+
+    def link_route_fragment(self, new_head, fragment_head, length=1):
+        route = self.find_route_by_vertex(new_head)
+        first_edge = new_head.edge_out
+        if new_head.edge_in.v1.id == 0:
+            route.first_vertex = fragment_head
+        last_vertex = first_edge.v2
+        first_edge.v2 = fragment_head
+
+        def link_vertex(vertex):
+            self.unlink_route_fragment(self.vertices[vertex.id])
+            self.vertices[vertex.id] = vertex
+            route.add_vertex(vertex)
+
+        link_vertex(fragment_head)
+        fragment_head.edge_in = first_edge
+        cur_vertex = fragment_head
+        i = 1
+        while i < length:
+            cur_vertex = cur_vertex.edge_out.v2
+            link_vertex(cur_vertex)
+            i += 1
+        cur_vertex.edge_out.v2 = last_vertex
+        if last_vertex.id != 0:
+            last_vertex.edge_in = cur_vertex.edge_out
+        if last_vertex.id == 0:
+            route.last_vertex = cur_vertex
         pass
 
     def find_route_by_vertex(self, vertex):
