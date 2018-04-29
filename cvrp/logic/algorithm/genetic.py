@@ -1,3 +1,4 @@
+import copy
 import random
 
 from cvrp.logic import Graph
@@ -36,15 +37,27 @@ class Genetic:
 
     def crossover(self):
         for i in range(0, self.solution_cnt):
-            giver = self.solutions[i]
-            receiver = self.solutions[random.randint(0, len(self.solutions) - 1)]
-            self.graph.routes = giver['routes']
+            giver = self.solutions[i]['routes']
+            r_i = random.randint(0, len(self.solutions) - 1)
+            receiver = copy.deepcopy(self.solutions[r_i]['routes'])
+            save = copy.deepcopy(self.solutions[r_i]['routes'])
+
+            self.graph.routes = giver
             r_vertex = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
             route_id, v_index = self.graph.find_vertex_coordinates(r_vertex.id)
             route_length = len(self.graph.routes[route_id])
             r_length = min(route_length - v_index, random.randint(1, 5))
             route_fragment = self.graph.routes[route_id][v_index:v_index + r_length]
-            pass
+
+            self.graph.routes = receiver
+            r_vertex = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
+            route_id, v_index = self.graph.find_vertex_coordinates(r_vertex.id)
+            self.graph.insert_route_fragment(route_id, route_fragment, v_index)
+            if self.graph.is_full:
+                self.solutions[r_i]['routes'] = save
+            else:
+                self.solutions[r_i]['routes'] = receiver
+        self.graph.routes = min(self.solutions, key=lambda x: x['distance'])['routes']
 
     def mutation(self):
         pass

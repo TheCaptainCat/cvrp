@@ -30,10 +30,12 @@ class Graphics:
         glBegin(GL_LINES)
         for i in range(0, len(self.graph.routes)):
             route = self.graph.routes[i]
+            if len(route) == 0:
+                continue
             glColor3fv(self.colors[i])
-            draw_line(self.graph.home, route[0])
+            draw_line(self.graph.home, self.graph.vertices[route[0]])
             for j in range(1, len(route)):
-                draw_line(route[j - 1], route[j])
-            draw_line(route[len(route) - 1], self.graph.home)
+                draw_line(self.graph.vertices[route[j - 1]], self.graph.vertices[route[j]])
+            draw_line(self.graph.vertices[route[len(route) - 1]], self.graph.home)
             glColor3f(1.0, 1.0, 1.0)
         glEnd()
