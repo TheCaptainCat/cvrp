@@ -28,8 +28,9 @@ def main():
     graph = Graph(vertices, 100)
     graph.set_random_routes()
     graphics = Graphics(graph)
-    # graph.algorithm = Tabu(graph, 20, 300)
+    # graph.algorithm = Tabu(graph, 30, 200)
     graph.algorithm = Genetic(graph, 10)
+    distance = graph.distance
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -49,6 +50,10 @@ def main():
                                                    graph.route_quantity(i))))
             i += 1
         draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Total distance: %d" % graph.distance))
+        i += 1
+        if distance > graph.distance:
+            distance = graph.distance
+        draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Minimum distance: %d" % distance))
 
         graph.compute_algorithm()
 
