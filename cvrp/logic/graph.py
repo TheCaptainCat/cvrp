@@ -76,8 +76,8 @@ class Graph:
         return v1, v2
 
     def pick_random_routes(self):
-        r1 = self.routes[random.randint(0, len(self.routes) - 1)]
-        r2 = self.routes[random.randint(0, len(self.routes) - 1)]
+        r1 = self.routes[random.randint(0, len(self.routes))]
+        r2 = self.routes[random.randint(0, len(self.routes))]
         return r1, r2
 
     def swap_vertices(self, v1, v2):
