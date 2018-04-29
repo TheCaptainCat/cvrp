@@ -32,7 +32,7 @@ class Genetic:
             while 1 - w < r:
                 rank += 1
                 w /= 1.5
-            new_solutions.append(self.solutions[ranks[min(rank - 1, len(ranks) - 1)]])
+            new_solutions.append(copy.deepcopy(self.solutions[ranks[min(rank - 1, len(ranks) - 1)]]))
         self.solutions = new_solutions
 
     def crossover(self):
@@ -57,6 +57,7 @@ class Genetic:
                 self.solutions[r_i]['routes'] = save
             else:
                 self.solutions[r_i]['routes'] = receiver
+                self.solutions[r_i]['distance'] = self.graph.distance
         self.graph.routes = min(self.solutions, key=lambda x: x['distance'])['routes']
 
     def mutation(self):
