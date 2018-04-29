@@ -13,6 +13,8 @@ class Graph:
 
     def route_length(self, route_id):
         route = self.routes[route_id]
+        if len(route) == 0:
+            return 0
         vertex = route[0]
         length = self.home.distance_to(route[0])
         for i in range(1, len(route)):
@@ -67,11 +69,20 @@ class Graph:
         v2 = self.vertices[random.randint(1, self.vertices_cnt - 1)]
         return v1, v2
 
+    def pick_random_routes(self):
+        r1 = self.routes[random.randint(0, len(self.routes) - 1)]
+        r2 = self.routes[random.randint(0, len(self.routes) - 1)]
+        return r1, r2
+
     def swap_vertices(self, v1, v2):
         v1_route_id, v1_index = self.find_vertex_coordinates(v1.id)
         v2_route_id, v2_index = self.find_vertex_coordinates(v2.id)
         self.routes[v1_route_id][v1_index] = v2
         self.routes[v2_route_id][v2_index] = v1
+
+    def move_vertex(self, v1, origin_route, dest_route, index):
+        self.routes[dest_route].insert(index, v1)
+        self.routes[origin_route].remove(v1)
 
     def compute_algorithm(self):
         if self.algorithm is not None:
