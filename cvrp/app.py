@@ -5,9 +5,9 @@ from OpenGL.GLUT import *
 from pygame.locals import *
 
 from cvrp import Builder
+from cvrp.console import Console
 from cvrp.graphics import Graphics
 from cvrp.logic import Graph
-from cvrp.logic.algorithm import Tabu, Genetic
 
 
 def draw_text(position, v_color, text_string):
@@ -19,17 +19,16 @@ def draw_text(position, v_color, text_string):
 
 
 def main():
+    vertices = Builder(Console.file()).build()
+    graph = Graph(vertices, 100)
+    graph.set_random_routes()
+    graphics = Graphics(graph)
+    graph.algorithm = Console.algorithm(graph)
     pygame.init()
     display = (1200, 900)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     gluPerspective(45, (display[0] / display[1]), 0.1, 150.0)
     glTranslatef(-50.0, -50.0, -150)
-    vertices = Builder('../data/data01.csv').build()
-    graph = Graph(vertices, 100)
-    graph.set_random_routes()
-    graphics = Graphics(graph)
-    # graph.algorithm = Tabu(graph, 30, 200)
-    graph.algorithm = Genetic(graph, 10)
     distance = graph.distance
     while True:
         for event in pygame.event.get():
