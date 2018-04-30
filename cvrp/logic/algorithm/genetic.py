@@ -36,11 +36,10 @@ class Genetic:
         self.solutions = new_solutions
 
     def crossover(self):
-        for i in range(0, self.solution_cnt):
+        for i in range(0, len(self.solutions)):
             giver = self.solutions[i]['routes']
             r_i = random.randint(0, len(self.solutions) - 1)
             receiver = copy.deepcopy(self.solutions[r_i]['routes'])
-            save = copy.deepcopy(self.solutions[r_i]['routes'])
 
             self.graph.routes = giver
             r_vertex = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
@@ -53,17 +52,26 @@ class Genetic:
             r_vertex = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
             route_id, v_index = self.graph.find_vertex_coordinates(r_vertex.id)
             self.graph.insert_route_fragment(route_id, route_fragment, v_index)
-            if self.graph.is_full:
-                self.solutions[r_i]['routes'] = save
-            else:
+            if not self.graph.is_full:
                 self.solutions[r_i]['routes'] = receiver
                 self.solutions[r_i]['distance'] = self.graph.distance
-        self.graph.routes = min(self.solutions, key=lambda x: x['distance'])['routes']
 
     def mutation(self):
-        pass
+        for i in range(0, len(self.solutions)):
+            if random.random() < 0.05:
+                for j in range(0, random.randint(1, 10)):
+                    mutation = copy.deepcopy(self.solutions[i]['routes'])
+                    self.graph.routes = mutation
+                    r_vertex1 = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
+                    r_vertex2 = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
+                    route_id2, v_index2 = self.graph.find_vertex_coordinates(r_vertex2.id)
+                    self.graph.insert_route_fragment(route_id2, [r_vertex1.id], v_index2)
+                    if not self.graph.is_full:
+                        self.solutions[i]['routes'] = mutation
+                        self.solutions[i]['distance'] = self.graph.distance
 
     def compute(self):
         self.reproduction()
         self.crossover()
         self.mutation()
+        self.graph.routes = min(self.solutions, key=lambda x: x['distance'])['routes']

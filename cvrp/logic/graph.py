@@ -102,6 +102,15 @@ class Graph:
         self.routes[dest_route].insert(index, v1.id)
         self.routes[origin_route].remove(v1.id)
 
+    def remove_empty_routes(self):
+        routes_to_rm = []
+        for route in self.routes:
+            if len(route) == 0:
+                routes_to_rm.append(route)
+        for route in routes_to_rm:
+            self.routes.remove(route)
+
     def compute_algorithm(self):
         if self.algorithm is not None:
             self.algorithm.compute()
+            self.remove_empty_routes()

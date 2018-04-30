@@ -7,7 +7,7 @@ class Graphics:
     def __init__(self, graph):
         self.graph = graph
         self.colors = {}
-        for i in range(0, len(self.graph.routes)):
+        for i in range(0, len(self.graph.routes) + 1):
             self.colors[i] = generate_new_color(self.colors.values(), pastel_factor=0.01)
 
     def draw(self):

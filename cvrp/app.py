@@ -29,7 +29,7 @@ def main():
     graph.set_random_routes()
     graphics = Graphics(graph)
     # graph.algorithm = Tabu(graph, 30, 200)
-    graph.algorithm = Genetic(graph, 10)
+    graph.algorithm = Genetic(graph, 300)
     distance = graph.distance
     while True:
         for event in pygame.event.get():
