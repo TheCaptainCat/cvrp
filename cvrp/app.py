@@ -1,4 +1,6 @@
+import copy
 import pygame
+import sys
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -24,17 +26,22 @@ def main():
     graph.set_random_routes()
     graphics = Graphics(graph)
     graph.algorithm = Console.algorithm(graph)
+
     pygame.init()
     display = (1200, 900)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
     gluPerspective(45, (display[0] / display[1]), 0.1, 150.0)
     glTranslatef(-50.0, -50.0, -150)
-    distance = graph.distance
-    while True:
+
+    min_distance = graph.distance
+    min_graph = copy.deepcopy(graph)
+    loop = True
+    while loop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                loop = False
+        if not loop:
+            break
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         graphics.draw()
 
@@ -50,11 +57,39 @@ def main():
             i += 1
         draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Total distance: %d" % graph.distance))
         i += 1
-        if distance > graph.distance:
-            distance = graph.distance
-        draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Minimum distance: %d" % distance))
+        if min_distance > graph.distance:
+            min_distance = graph.distance
+            min_graph = copy.deepcopy(graph)
+        draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Minimum distance: %d" % min_distance))
 
         graph.compute_algorithm()
+
+        pygame.display.flip()
+
+    graphics.graph = min_graph
+    graph = min_graph
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        graphics.draw()
+
+        i = 0
+        for i in range(0, len(graph.routes)):
+            route = graph.routes[i]
+            v_color = graphics.colors[i]
+            draw_text((-30, (100 - i * 3), 0), (v_color[0] * 255, v_color[1] * 255, v_color[2] * 255, 255),
+                      ("Route %d: %.2f (%d %d)" % (i,
+                                                   graph.route_length(i),
+                                                   len(route),
+                                                   graph.route_quantity(i))))
+            i += 1
+
+        draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Final distance: %d" % min_distance))
 
         pygame.display.flip()
 
