@@ -6,6 +6,7 @@ class Console:
 
     @staticmethod
     def algorithm(graph):
+        print(f"Nombre de clients de ce graphe : {graph.vertices_cnt}")
         print("Choisissez un algorithme\n1) Tabu\n"
               + "2) Génétique\n3) Stop")
         c = None
@@ -49,9 +50,9 @@ class Console:
     @staticmethod
     def file():
         file = None
-        while file is None or not 1 <= file <= 5:
+        while file is None or not 0 <= file <= 5:
             try:
-                file = int(input('Choisissez un échantillon de données (entre 1 et 5) : '))
+                file = int(input('Choisissez un échantillon de données (entre 0 et 5) : '))
             except ValueError:
                 print('Erreur de saisie')
                 continue
