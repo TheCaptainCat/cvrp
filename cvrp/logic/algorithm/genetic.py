@@ -17,7 +17,7 @@ class Genetic:
             self.graph.routes = solution
             self.solutions.append({'routes': solution, 'distance': self.graph.distance})
 
-    def reproduction(self):
+    def selection(self):
         total_distance = sum(solution['distance'] for solution in self.solutions)
         roulette = {}
         for i in range(0, len(self.solutions)):
@@ -64,14 +64,17 @@ class Genetic:
                     self.graph.routes = mutation
                     r_vertex1 = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
                     r_vertex2 = self.graph.vertices[random.randint(1, len(self.graph.vertices))]
-                    route_id2, v_index2 = self.graph.find_vertex_coordinates(r_vertex2.id)
-                    self.graph.insert_route_fragment(route_id2, [r_vertex1.id], v_index2)
+                    if random.random() < 0.5:
+                        route_id2, v_index2 = self.graph.find_vertex_coordinates(r_vertex2.id)
+                        self.graph.insert_route_fragment(route_id2, [r_vertex1.id], v_index2)
+                    else:
+                        self.graph.swap_vertices(r_vertex1, r_vertex2)
                     if not self.graph.is_full:
                         self.solutions[i]['routes'] = mutation
                         self.solutions[i]['distance'] = self.graph.distance
 
     def compute(self):
-        self.reproduction()
+        self.selection()
         self.crossover()
         self.mutation()
         self.graph.routes = min(self.solutions, key=lambda x: x['distance'])['routes']
