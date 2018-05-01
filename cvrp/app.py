@@ -30,11 +30,12 @@ def main():
     pygame.init()
     display = (1200, 900)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
+    pygame.display.set_caption('CVRP - Computing...')
     gluPerspective(45, (display[0] / display[1]), 0.1, 150.0)
     glTranslatef(-50.0, -50.0, -150)
 
     min_distance = graph.distance
-    min_graph = copy.deepcopy(graph)
+    min_graph = copy.deepcopy(graph.routes)
     loop = True
     while loop:
         for event in pygame.event.get():
@@ -59,15 +60,15 @@ def main():
         i += 1
         if min_distance > graph.distance:
             min_distance = graph.distance
-            min_graph = copy.deepcopy(graph)
+            min_graph = copy.deepcopy(graph.routes)
         draw_text((-30, (100 - i * 3), 0), (255, 255, 255, 255), ("Minimum distance: %d" % min_distance))
 
         graph.compute_algorithm()
 
         pygame.display.flip()
 
-    graphics.graph = min_graph
-    graph = min_graph
+    graph.routes = min_graph
+    pygame.display.set_caption('CVRP - Final result!')
 
     while True:
         for event in pygame.event.get():

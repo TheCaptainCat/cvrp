@@ -17,7 +17,7 @@ class Genetic:
             self.graph.routes = solution
             self.solutions.append({'routes': solution, 'distance': self.graph.distance})
 
-    def reproduction(self):
+    def selection(self):
         total_distance = sum(solution['distance'] for solution in self.solutions)
         roulette = {}
         for i in range(0, len(self.solutions)):
@@ -74,7 +74,7 @@ class Genetic:
                         self.solutions[i]['distance'] = self.graph.distance
 
     def compute(self):
-        self.reproduction()
+        self.selection()
         self.crossover()
         self.mutation()
         self.graph.routes = min(self.solutions, key=lambda x: x['distance'])['routes']
