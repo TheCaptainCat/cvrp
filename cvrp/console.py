@@ -56,4 +56,4 @@ class Console:
             except ValueError:
                 print('Erreur de saisie')
                 continue
-        return '../data/data0{0}.csv'.format(file)
+        return 'data/data0{0}.csv'.format(file)
